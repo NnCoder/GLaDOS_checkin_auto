@@ -1,9 +1,19 @@
 import requests,json,os
+
+def wx_work_robot_notice(robot_key, sendContent):
+    send_msg = {
+        "msgtype": "text",
+        "text": {
+            "content": sendContent
+        }
+    }
+    requests.post("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=" + robot_key, json=send_msg)
+
 # -------------------------------------------------------------------------------------------
 # github workflows
 # -------------------------------------------------------------------------------------------
 if __name__ == '__main__':
-# pushplus秘钥 申请地址 http://www.pushplus.plus
+# 企微机器人
     sckey = os.environ.get("PUSHPLUS_TOKEN", "")
 # 推送内容
     sendContent = ''
@@ -21,6 +31,7 @@ if __name__ == '__main__':
     payload={
         'token': 'glados.one'
     }
+
     for cookie in cookies:
         checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'application/json;charset=UTF-8'},data=json.dumps(payload))
         state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
@@ -33,10 +44,10 @@ if __name__ == '__main__':
             print(email+'----结果--'+mess+'----剩余('+time+')天')  # 日志输出
             sendContent += email+'----'+mess+'----剩余('+time+')天\n'
         else:
-            requests.get('http://www.pushplus.plus/send?token=' + sckey + '&content='+email+'cookie已失效')
+            wx_work_robot_notice(sckey, email+'cookie已失效')
             print('cookie已失效')  # 日志输出
      #--------------------------------------------------------------------------------------------------------#   
     if sckey != "":
-         requests.get('http://www.pushplus.plus/send?token=' + sckey + '&title='+email+'签到成功'+'&content='+sendContent)
+        wx_work_robot_notice(sckey, sendContent)
 
 
